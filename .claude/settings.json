@@ -11,7 +11,9 @@
       "Bash(node -e \"const l = require\\(''d:/code/GITHUB/AI-Resume-Builder/client/node_modules/lucide-react''\\); const keys = Object.keys\\(l\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''git''\\) || k.toLowerCase\\(\\).includes\\(''link''\\)\\); console.log\\(keys.join\\(''\\\\n''\\)\\)\")",
       "Bash(timeout 4 node server.js)",
       "Bash(node -e \"console.log\\(require\\(''crypto''\\).randomBytes\\(64\\).toString\\(''hex''\\)\\)\")",
-      "Bash(curl -s -X POST https://ai-resume-builder-api-4seb.onrender.com/api/auth/register -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test\"\",\"\"email\"\":\"\"test@test.com\"\",\"\"password\"\":\"\"123456\"\"}\")"
+      "Bash(curl -s -X POST https://ai-resume-builder-api-4seb.onrender.com/api/auth/register -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test\"\",\"\"email\"\":\"\"test@test.com\"\",\"\"password\"\":\"\"123456\"\"}\")",
+      "Bash(sed -i \"s/console.error\\(''AI summary error:'', error.message\\);/console.error\\(''AI summary error:'', error.message, error.status, error.errorDetails\\);/\" d:/code/GITHUB/AI-Resume-Builder/server/src/controllers/ai.controller.js)",
+      "Bash(sed -i \"s/console.error\\(''AI experience error:'', error.message\\);/console.error\\(''AI experience error:'', error.message, error.status\\);/\" d:/code/GITHUB/AI-Resume-Builder/server/src/controllers/ai.controller.js)"
     ]
   }
 }
