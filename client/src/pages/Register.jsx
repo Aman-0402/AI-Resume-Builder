@@ -12,7 +12,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password.length < 6) return toast.error('Password must be at least 6 characters');
+    if (form.password.length < 8) return toast.error('Password must be at least 8 characters');
     setLoading(true);
     try {
       await register(form.name, form.email, form.password);
@@ -45,7 +45,7 @@ const Register = () => {
                 <input
                   type="text"
                   required
-                  placeholder="Aman Gupta"
+                  placeholder="Aman"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="w-full bg-gray-800 border border-gray-600 rounded-lg pl-9 pr-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
@@ -75,7 +75,7 @@ const Register = () => {
                 <input
                   type="password"
                   required
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   className="w-full bg-gray-800 border border-gray-600 rounded-lg pl-9 pr-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"

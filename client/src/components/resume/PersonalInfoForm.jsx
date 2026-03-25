@@ -79,7 +79,7 @@ const PersonalInfoForm = ({ resume, onUpdate }) => {
       <h2 className="text-white font-semibold text-sm mb-4">Personal Information</h2>
 
       <Field label="Resume Title" name="title" value={form.title} onChange={handleChange} placeholder="e.g. Software Engineer Resume" />
-      <Field label="Full Name *"  name="fullName" value={form.fullName} onChange={handleChange} placeholder="Aman Gupta" />
+      <Field label="Full Name *"  name="fullName" value={form.fullName} onChange={handleChange} placeholder="Aman" />
       <Field label="Email *"      name="email"    value={form.email}    onChange={handleChange} type="email" placeholder="aman@example.com" />
 
       <div className="grid grid-cols-2 gap-3">
