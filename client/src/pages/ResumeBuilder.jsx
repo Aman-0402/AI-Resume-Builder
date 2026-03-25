@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
@@ -9,7 +10,8 @@ import EducationForm from '../components/resume/EducationForm';
 import SkillsForm from '../components/resume/SkillsForm';
 import ProjectsForm from '../components/resume/ProjectsForm';
 import ResumePreview from '../components/resume/ResumePreview';
-import { Loader, User, Briefcase, GraduationCap, Code, FolderOpen } from 'lucide-react';
+import ResumePrint from '../components/resume/ResumePrint';
+import { Loader, User, Briefcase, GraduationCap, Code, FolderOpen, Download } from 'lucide-react';
 
 const TABS = [
   { id: 'personal',    label: 'Personal',    icon: User },
@@ -25,6 +27,24 @@ const ResumeBuilder = () => {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('personal');
+  const [printing, setPrinting] = useState(false);
+
+  // ref points at the <ResumePrint> DOM node
+  const printRef = useRef(null);
+
+  // react-to-print hook
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: resume ? `${resume.fullName} - Resume` : 'Resume',
+    onBeforePrint: () => {
+      setPrinting(true);
+      return Promise.resolve();
+    },
+    onAfterPrint: () => {
+      setPrinting(false);
+      toast.success('PDF downloaded!');
+    },
+  });
 
   useEffect(() => {
     fetchResume();
@@ -54,11 +74,30 @@ const ResumeBuilder = () => {
     <div className="min-h-screen bg-gray-950">
       <Navbar />
 
+      {/* Hidden print component — mounted but invisible */}
+      <div style={{ display: 'none' }} id="resume-print-area">
+        <ResumePrint ref={printRef} resume={resume} />
+      </div>
+
       <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Page title */}
-        <div className="mb-6">
-          <h1 className="text-xl font-bold text-white">{resume.title}</h1>
-          <p className="text-gray-400 text-sm">{resume.fullName}</p>
+        {/* Page header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-xl font-bold text-white">{resume.title}</h1>
+            <p className="text-gray-400 text-sm">{resume.fullName}</p>
+          </div>
+
+          {/* Download PDF button */}
+          <button
+            onClick={handlePrint}
+            disabled={printing}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2.5 rounded-lg transition-colors shadow-lg shadow-green-900/30"
+          >
+            {printing
+              ? <><Loader size={16} className="animate-spin" /> Preparing...</>
+              : <><Download size={16} /> Download PDF</>
+            }
+          </button>
         </div>
 
         <div className="flex gap-6">
@@ -95,13 +134,24 @@ const ResumeBuilder = () => {
           {/* Right: Live preview */}
           <div className="hidden lg:block flex-1">
             <div className="sticky top-6 bg-gray-900 border border-gray-700 rounded-xl overflow-hidden">
-              <div className="bg-gray-800 border-b border-gray-700 px-4 py-2.5 flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/60" />
+              {/* Preview bar with download button */}
+              <div className="bg-gray-800 border-b border-gray-700 px-4 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/60" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/60" />
+                  </div>
+                  <span className="text-gray-400 text-xs ml-2">Live Preview</span>
                 </div>
-                <span className="text-gray-400 text-xs ml-2">Live Preview</span>
+                <button
+                  onClick={handlePrint}
+                  disabled={printing}
+                  className="flex items-center gap-1.5 bg-green-600/20 hover:bg-green-600/40 border border-green-600/30 text-green-400 text-xs font-medium px-3 py-1 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  <Download size={12} />
+                  {printing ? 'Preparing...' : 'Download PDF'}
+                </button>
               </div>
               <div className="overflow-y-auto max-h-[80vh] p-4">
                 <ResumePreview resume={resume} />

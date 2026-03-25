@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Print / PDF styles ── */
+@media print {
+  /* Hide everything except the resume */
+  body > #root > * {
+    display: none !important;
+  }
+
+  /* Show only the print target */
+  #resume-print-area {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  /* A4 page settings */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  /* Remove browser header/footer */
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+}
