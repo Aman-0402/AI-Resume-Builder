@@ -9,9 +9,10 @@ import ExperienceForm from '../components/resume/ExperienceForm';
 import EducationForm from '../components/resume/EducationForm';
 import SkillsForm from '../components/resume/SkillsForm';
 import ProjectsForm from '../components/resume/ProjectsForm';
+import AtsChecker from '../components/resume/AtsChecker';
 import ResumePreview from '../components/resume/ResumePreview';
 import ResumePrint from '../components/resume/ResumePrint';
-import { Loader, User, Briefcase, GraduationCap, Code, FolderOpen, Download } from 'lucide-react';
+import { Loader, User, Briefcase, GraduationCap, Code, FolderOpen, Download, Target } from 'lucide-react';
 
 const TABS = [
   { id: 'personal',    label: 'Personal',    icon: User },
@@ -19,6 +20,7 @@ const TABS = [
   { id: 'education',   label: 'Education',   icon: GraduationCap },
   { id: 'skills',      label: 'Skills',      icon: Code },
   { id: 'projects',    label: 'Projects',    icon: FolderOpen },
+  { id: 'ats',         label: 'ATS',         icon: Target },
 ];
 
 const ResumeBuilder = () => {
@@ -84,7 +86,21 @@ const ResumeBuilder = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-bold text-white">{resume.title}</h1>
-            <p className="text-gray-400 text-sm">{resume.fullName}</p>
+            <div className="flex items-center gap-3 mt-1">
+              <p className="text-gray-400 text-sm">{resume.fullName}</p>
+              {resume.atsScore != null && (
+                <span
+                  className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                    resume.atsScore >= 80 ? 'bg-green-900/40 text-green-400 border-green-700/50' :
+                    resume.atsScore >= 60 ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700/50' :
+                    'bg-red-900/40 text-red-400 border-red-700/50'
+                  }`}
+                >
+                  <Target size={10} />
+                  ATS {resume.atsScore}/100
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Download PDF button */}
@@ -128,6 +144,7 @@ const ResumeBuilder = () => {
               {activeTab === 'education'  && <EducationForm resume={resume} onUpdate={setResume} />}
               {activeTab === 'skills'     && <SkillsForm resume={resume} onUpdate={setResume} />}
               {activeTab === 'projects'   && <ProjectsForm resume={resume} onUpdate={setResume} />}
+              {activeTab === 'ats'        && <AtsChecker resume={resume} onUpdate={setResume} />}
             </div>
           </div>
 

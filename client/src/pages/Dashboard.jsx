@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
-import { Plus, FileText, Trash2, Edit, Clock, Loader } from 'lucide-react';
+import { Plus, FileText, Trash2, Clock, Loader, Target } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -141,10 +141,22 @@ const Dashboard = () => {
                   </button>
                 </div>
 
-                {/* Template badge */}
-                <span className="inline-block bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full capitalize mb-4">
-                  {resume.templateId} template
-                </span>
+                {/* Template badge + ATS score */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="inline-block bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full capitalize">
+                    {resume.templateId} template
+                  </span>
+                  {resume.atsScore != null && (
+                    <span className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                      resume.atsScore >= 80 ? 'bg-green-900/40 text-green-400 border-green-700/50' :
+                      resume.atsScore >= 60 ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700/50' :
+                      'bg-red-900/40 text-red-400 border-red-700/50'
+                    }`}>
+                      <Target size={9} />
+                      ATS {resume.atsScore}
+                    </span>
+                  )}
+                </div>
 
                 {/* Date */}
                 <div className="flex items-center gap-1.5 text-gray-500 text-xs">
