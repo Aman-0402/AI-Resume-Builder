@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import api from '../../services/api';
+import { generateProjectDescription } from '../../services/aiService';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Loader, ExternalLink, GitBranch } from 'lucide-react';
+import { Plus, Trash2, Loader, ExternalLink, GitBranch, Sparkles } from 'lucide-react';
 
 const EMPTY = { name: '', description: '', techStack: '', liveUrl: '', githubUrl: '' };
 
@@ -10,8 +11,26 @@ const ProjectsForm = ({ resume, onUpdate }) => {
   const [form, setForm] = useState(EMPTY);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleGenerateDescription = async () => {
+    if (!form.name.trim()) return toast.error('Enter project name first');
+    setAiLoading(true);
+    try {
+      const description = await generateProjectDescription({
+        projectName: form.name,
+        techStack: form.techStack,
+      });
+      setForm((prev) => ({ ...prev, description }));
+      toast.success('Description generated!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'AI generation failed');
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const handleAdd = async () => {
     if (!form.name.trim()) return toast.error('Project name is required');
@@ -92,12 +111,24 @@ const ProjectsForm = ({ resume, onUpdate }) => {
             <input name="techStack" value={form.techStack} onChange={handleChange} placeholder="React, Node.js, PostgreSQL"
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500" />
           </div>
+
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Description</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-gray-400">Description</label>
+              <button
+                onClick={handleGenerateDescription}
+                disabled={aiLoading}
+                className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-medium disabled:opacity-50"
+              >
+                {aiLoading ? <Loader size={11} className="animate-spin" /> : <Sparkles size={11} />}
+                AI Generate
+              </button>
+            </div>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              placeholder="Describe what the project does and your role..."
+              placeholder="Describe the project or click 'AI Generate'..."
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none" />
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Live URL</label>
@@ -110,6 +141,7 @@ const ProjectsForm = ({ resume, onUpdate }) => {
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500" />
             </div>
           </div>
+
           <div className="flex gap-2">
             <button onClick={handleAdd} disabled={saving}
               className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold py-2 rounded-lg">

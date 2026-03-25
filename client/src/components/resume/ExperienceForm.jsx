@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import api from '../../services/api';
+import { generateExperienceBullets } from '../../services/aiService';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, ChevronDown, ChevronUp, Loader } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, Loader, Sparkles } from 'lucide-react';
 
 const EMPTY = { company: '', position: '', location: '', startDate: '', endDate: '', current: false, description: '' };
 
@@ -10,11 +11,30 @@ const ExperienceForm = ({ resume, onUpdate }) => {
   const [form, setForm] = useState(EMPTY);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+  };
+
+  const handleGenerateBullets = async () => {
+    if (!form.position || !form.company) return toast.error('Enter position and company first');
+    setAiLoading(true);
+    try {
+      const { raw } = await generateExperienceBullets({
+        position: form.position,
+        company: form.company,
+        skills: resume.skills?.map((s) => s.name).join(', '),
+      });
+      setForm((prev) => ({ ...prev, description: raw.trim() }));
+      toast.success('Bullets generated!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'AI generation failed');
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const handleAdd = async () => {
@@ -60,7 +80,6 @@ const ExperienceForm = ({ resume, onUpdate }) => {
         </button>
       </div>
 
-      {/* Existing experiences */}
       {experiences.map((exp) => (
         <div key={exp.id} className="bg-gray-800 border border-gray-600 rounded-lg overflow-hidden">
           <div
@@ -80,14 +99,13 @@ const ExperienceForm = ({ resume, onUpdate }) => {
             </div>
           </div>
           {expandedId === exp.id && exp.description && (
-            <div className="px-4 pb-3 text-gray-400 text-xs border-t border-gray-700 pt-3">
+            <div className="px-4 pb-3 text-gray-400 text-xs border-t border-gray-700 pt-3 whitespace-pre-line">
               {exp.description}
             </div>
           )}
         </div>
       ))}
 
-      {/* Add form */}
       {adding && (
         <div className="bg-gray-800 border border-indigo-500/50 rounded-lg p-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
@@ -124,10 +142,21 @@ const ExperienceForm = ({ resume, onUpdate }) => {
             Currently working here
           </label>
 
+          {/* Description with AI button */}
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Description (bullet points)</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              placeholder="• Built REST APIs using Node.js&#10;• Improved performance by 40%"
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-gray-400">Description</label>
+              <button
+                onClick={handleGenerateBullets}
+                disabled={aiLoading}
+                className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-medium disabled:opacity-50"
+              >
+                {aiLoading ? <Loader size={11} className="animate-spin" /> : <Sparkles size={11} />}
+                AI Generate
+              </button>
+            </div>
+            <textarea name="description" value={form.description} onChange={handleChange} rows={4}
+              placeholder="• Click 'AI Generate' to auto-fill bullet points&#10;• Or write your own achievements"
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none" />
           </div>
 
