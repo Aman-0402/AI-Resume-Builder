@@ -36,7 +36,7 @@ Requirements:
     const summary = await ask(prompt);
     res.json({ summary: summary.trim() });
   } catch (error) {
-    console.error('AI summary error:', error.message);
+    console.error('AI summary error:', error.message, error.status, error.errorDetails);
     res.status(500).json({ message: 'AI generation failed. Check your GEMINI_API_KEY.' });
   }
 };
@@ -83,7 +83,7 @@ Requirements:
 
     res.json({ bullets, raw: text.trim() });
   } catch (error) {
-    console.error('AI experience error:', error.message);
+    console.error('AI experience error:', error.message, error.status);
     res.status(500).json({ message: 'AI generation failed. Check your GEMINI_API_KEY.' });
   }
 };
