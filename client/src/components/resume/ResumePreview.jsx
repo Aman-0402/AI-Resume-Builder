@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Github, Globe } from 'lucide-react';
+import { Mail, Phone, MapPin, Link, GitBranch, Globe } from 'lucide-react';
 
 const ResumePreview = ({ resume }) => {
   if (!resume) return null;
@@ -25,8 +25,8 @@ const ResumePreview = ({ resume }) => {
           {email    && <span className="flex items-center gap-1"><Mail size={9} />{email}</span>}
           {phone    && <span className="flex items-center gap-1"><Phone size={9} />{phone}</span>}
           {location && <span className="flex items-center gap-1"><MapPin size={9} />{location}</span>}
-          {linkedin && <span className="flex items-center gap-1"><Linkedin size={9} />{linkedin}</span>}
-          {github   && <span className="flex items-center gap-1"><Github size={9} />{github}</span>}
+          {linkedin && <span className="flex items-center gap-1"><Link size={9} />{linkedin}</span>}
+          {github   && <span className="flex items-center gap-1"><GitBranch size={9} />{github}</span>}
           {website  && <span className="flex items-center gap-1"><Globe size={9} />{website}</span>}
         </div>
       </div>

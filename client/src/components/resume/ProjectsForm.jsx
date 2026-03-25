@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Loader, ExternalLink, Github } from 'lucide-react';
+import { Plus, Trash2, Loader, ExternalLink, GitBranch } from 'lucide-react';
 
 const EMPTY = { name: '', description: '', techStack: '', liveUrl: '', githubUrl: '' };
 
@@ -68,7 +68,7 @@ const ProjectsForm = ({ resume, onUpdate }) => {
                 )}
                 {proj.githubUrl && (
                   <span className="flex items-center gap-1 text-gray-500 text-xs">
-                    <Github size={11} /> GitHub
+                    <GitBranch size={11} /> GitHub
                   </span>
                 )}
               </div>
